@@ -1,10 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:alemshop/models/cart.dart' show Cart;
 import 'package:alemshop/widgets/cart_item.dart';
+
+import 'package:http/http.dart' as http;
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart';
@@ -30,7 +33,7 @@ class CartScreen extends StatelessWidget {
                       'Cумма',
                       style: TextStyle(fontSize: 16),
                     ),
-                    Spacer(),
+                    // Spacer(),
                     Chip(
                       label: Consumer<Cart>(
                         builder: (_, cart, ch) => Text(
@@ -116,8 +119,8 @@ class _OrderButtonState extends State<OrderButton> {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<Cart>(context);
-    print(cart.itemCount);
     return FlatButton(
+      padding: EdgeInsets.all(1.0),
       child: _isLoading ? CircularProgressIndicator() : Text('ЗАКАЗАТЬ СЕЙЧАС'),
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
           ? null
@@ -130,26 +133,28 @@ class _OrderButtonState extends State<OrderButton> {
                 onPressed: () {
                   if (FirebaseAuth.instance.currentUser != null) {
                     cart.items.forEach((key, value) {
-                      DocumentReference docRef =
-                          FirebaseFirestore.instance.collection('orders').doc();
-                      docRef.set({
-                        "id": value.orderId,
-                        "documentId": docRef.id,
-                        "size": value.sizeList.toList(),
-                        "alemid": value.id,
-                        "name": value.title,
-                        "quantity": value.quantity,
-                        "user": value.user,
-                        "color": value.colorList.toList(),
-                        "date": DateTime.now().toString(),
-                        "inProcess": false,
-                        "completed": false,
-                      });
-
-                      FirebaseFirestore.instance
-                          .collection('lastids')
-                          .doc('lastIds')
-                          .update({'orders': value.orderId + 1});
+                      Uri uri = Uri.parse("http://127.0.0.1:8000/order-list/");
+                      http.post(uri,
+                          headers: <String, String>{
+                            'Conection-Type': 'application/json; charset=UTF-8',
+                            'connection': 'keep-alive'
+                          },
+                          body: jsonEncode(<String, dynamic>{
+                            "size": value.sizeList.toList(),
+                            "ai": value.id,
+                            "name": value.title,
+                            "quantity": value.quantity,
+                            "quantities": value.quantityList.toList(),
+                            "price": value.price,
+                            "userphone": value.userPhone,
+                            "useremail": value.userEmail,
+                            "username": value.userName,
+                            "color": value.colorList.toList(),
+                            "date": DateTime.now().toString(),
+                            "inProcess": false,
+                            "completed": false,
+                            "imgUrl": value.imgUrl,
+                          }));
                     });
                   } else {
                     print('logged');
@@ -161,21 +166,6 @@ class _OrderButtonState extends State<OrderButton> {
               );
               showAlertDialog(context, "Завершение заказа",
                   "Вы действительно хотите завершить заказ!");
-//               AlertDialog alertNotLogged = AlertDialog(
-//                 title: Text("Завершение заказа"),
-//                 content: SingleChildScrollView(
-//                     child: Text("Вы действительно хотите завершить заказ!")),
-//                 actions: [
-//                   okButton,
-//                 ],
-//               );
-// // show the dialog
-//               showDialog(
-//                 context: context,
-//                 builder: (BuildContext context) {
-//                   return alertNotLogged;
-//                 },
-//               );
               // set up the AlertDialog
               AlertDialog alert = AlertDialog(
                 title: Text("Завершение заказа"),

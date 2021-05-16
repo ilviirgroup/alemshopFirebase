@@ -1,15 +1,16 @@
-import 'package:alemshop/models/filter.dart';
+import 'package:alemshop/models/category_provider.dart';
 import 'package:alemshop/screens/contacts/about_us.dart';
 import 'package:alemshop/screens/contacts/contacts.dart';
 import 'package:alemshop/screens/home_screen.dart';
+import 'package:alemshop/screens/my_orders/my_ordersScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:provider/provider.dart';
 
-final user = FirebaseAuth.instance;
-final _firestore = FirebaseFirestore.instance;
+// final user = FirebaseAuth.instance;
+// final _firestore = FirebaseFirestore.instance;
 
 class AppDrawer extends StatefulWidget {
   final Function genderChanger;
@@ -26,22 +27,23 @@ class _AppDrawerState extends State<AppDrawer> {
   String userName = '';
   @override
   void initState() {
-    if (user.currentUser != null) {
-      userName = user.currentUser.phoneNumber;
-    } else {
-      userName = "";
-    }
+    // if (user.currentUser != null) {
+    //   userName = user.currentUser.phoneNumber;
+    // } else {
+    //   userName = "";
+    // }
     filterWoman = widget.woman;
     filterMan = widget.man;
     super.initState();
   }
 
-  void _singOut() {
-    FirebaseAuth.instance.signOut();
-  }
+  // void _singOut() {
+  //   FirebaseAuth.instance.signOut();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    final categoryProvider = Provider.of<Categories>(context);
     return Drawer(
       child: ListView(
         children: [
@@ -81,40 +83,40 @@ class _AppDrawerState extends State<AppDrawer> {
               ],
             ),
           ),
-          StreamBuilder<QuerySnapshot>(
-            stream: _firestore.collection('update').snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.lightBlueAccent,
-                  ),
-                );
-              }
-              final update = snapshot.data.docs.reversed.first.data()['update'];
+          // StreamBuilder<QuerySnapshot>(
+          //   stream: _firestore.collection('update').snapshots(),
+          //   builder: (context, snapshot) {
+          //     if (!snapshot.hasData) {
+          //       return Center(
+          //         child: CircularProgressIndicator(
+          //           backgroundColor: Colors.lightBlueAccent,
+          //         ),
+          //       );
+          //     }
+          //     final update = snapshot.data.docs.reversed.first.data()['update'];
 
-              if (update) {
-                return ListTile(
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HomeScreen(
-                                  category: true,
-                                )));
-                  },
-                  title: Text(
-                    'Обновление доступно',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  leading: Icon(Icons.warning),
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
+          //     if (update) {
+          //       return ListTile(
+          //         onTap: () {
+          //           Navigator.pop(context);
+          //           Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                   builder: (context) => HomeScreen(
+          //                         category: true,
+          //                       )));
+          //         },
+          //         title: Text(
+          //           'Обновление доступно',
+          //           style: TextStyle(color: Colors.red),
+          //         ),
+          //         leading: Icon(Icons.warning),
+          //       );
+          //     } else {
+          //       return Container();
+          //     }
+          //   },
+          // ),
           ListTile(
             onTap: () {
               Navigator.pop(context);
@@ -138,6 +140,7 @@ class _AppDrawerState extends State<AppDrawer> {
               title:
                   Text('О нас', style: TextStyle(fontWeight: FontWeight.w600)),
               leading: Icon(Icons.info_rounded)),
+
           ListTile(
               onTap: () {
                 Navigator.pop(context);
@@ -150,13 +153,23 @@ class _AppDrawerState extends State<AppDrawer> {
                   style: TextStyle(fontWeight: FontWeight.w600)),
               leading: Icon(Icons.email)),
           ListTile(
-              onTap: () {
-                Navigator.pop(context);
-                user.signOut();
-              },
-              title:
-                  Text('Выйти', style: TextStyle(fontWeight: FontWeight.w600)),
-              leading: Icon(Icons.logout)),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MyOrders()));
+            },
+            title: Text('Мои заказы',
+                style: TextStyle(fontWeight: FontWeight.w600)),
+            leading: Icon(Icons.shop),
+          ),
+          // ListTile(
+          //     onTap: () {
+          //       Navigator.pop(context);
+          //       user.signOut();
+          //     },
+          //     title:
+          //         Text('Выйти', style: TextStyle(fontWeight: FontWeight.w600)),
+          //     leading: Icon(Icons.logout)),
           // ListTile(
           //     onTap: () {
           //       _singOut();
@@ -165,8 +178,8 @@ class _AppDrawerState extends State<AppDrawer> {
           //         Text('Выйти', style: TextStyle(fontWeight: FontWeight.w600)),
           //     leading: Icon(Icons.logout)),
           Divider(),
-          StreamBuilder<QuerySnapshot>(
-            stream: _firestore.collection('category').snapshots(),
+          FutureBuilder(
+            future: categoryProvider.getCategories(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -175,12 +188,12 @@ class _AppDrawerState extends State<AppDrawer> {
                   ),
                 );
               }
-              final categories = snapshot.data.docs.reversed;
+              final categories = snapshot.data;
               List<ListTile> categoryList = [];
               for (var category in categories) {
-                final url = category.data()['url'];
-                final name = category.data()['name'];
-                final subcategory = category.data()['id'];
+                final url = category.photo;
+                final name = category.name;
+                final subcategory = category.id;
 
                 final categoryitem = ListTile(
                   leading: Icon(Icons.account_tree),
@@ -191,7 +204,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => HomeScreen(
-                                category: false, subcategory: subcategory)));
+                                category: false, catId: subcategory)));
                   },
                 );
 

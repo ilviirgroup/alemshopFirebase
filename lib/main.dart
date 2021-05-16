@@ -1,4 +1,5 @@
 import 'package:alemshop/models/cart.dart';
+import 'package:alemshop/models/category_provider.dart';
 import 'package:alemshop/models/filter.dart';
 import 'package:alemshop/screens/home_screen.dart';
 import 'package:alemshop/screens/welcome.dart';
@@ -9,8 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
   runApp(AlemShop());
 }
 
@@ -22,6 +23,9 @@ class AlemShop extends StatelessWidget {
 
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider.value(
+          value: Categories(),
+        ),
         ChangeNotifierProvider.value(
           value: Cart(),
         ),

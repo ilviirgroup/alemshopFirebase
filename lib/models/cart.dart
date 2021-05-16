@@ -3,24 +3,30 @@ import 'package:flutter/foundation.dart';
 class CartItem {
   final int orderId;
   final String id;
-  final String user;
+  final String userPhone;
+  final String userEmail;
+  final String userName;
   final String title;
   final int quantity;
   final double price;
   final String imgUrl;
   final Set colorList;
   final Set sizeList;
+  final Set quantityList;
 
   CartItem({
     @required this.orderId,
     @required this.id,
-    @required this.user,
+    @required this.userPhone,
+    @required this.userEmail,
+    @required this.userName,
     @required this.title,
     @required this.quantity,
     @required this.price,
     @required this.imgUrl,
     @required this.colorList,
     @required this.sizeList,
+    @required this.quantityList,
   });
 }
 
@@ -50,25 +56,48 @@ class Cart with ChangeNotifier {
     int quantity,
     String title,
     String imgUrl,
-    String user,
+    String userPhone,
+    String userEmail,
+    String userName,
     Set colorList,
     Set sizeList,
+    Set quantityList,
   ) {
     if (_items.containsKey(productId)) {
       // change quantity...
-      _items.update(
-        productId,
-        (existingCartItem) => CartItem(
-            orderId: existingCartItem.orderId,
-            id: existingCartItem.id,
-            title: existingCartItem.title,
-            price: existingCartItem.price,
-            quantity: existingCartItem.quantity + 1,
-            imgUrl: existingCartItem.imgUrl,
-            user: existingCartItem.user,
-            colorList: existingCartItem.colorList,
-            sizeList: existingCartItem.sizeList),
-      );
+      _items.update(productId, (existingCartItem) {
+        for (var color in colorList) {
+          existingCartItem.colorList.add(color);
+        }
+        for (var size in sizeList) {
+          existingCartItem.sizeList.add(size);
+        }
+        for (var quantities in quantityList) {
+          if (quantities == existingCartItem.quantityList) {
+            existingCartItem.quantityList.add(existingCartItem.quantityList);
+          } else {
+            existingCartItem.quantityList.add(quantities);
+          }
+        }
+        print(existingCartItem.colorList);
+        print(existingCartItem.sizeList);
+        print(existingCartItem.quantityList);
+
+        return CartItem(
+          orderId: existingCartItem.orderId,
+          id: existingCartItem.id,
+          title: existingCartItem.title,
+          price: existingCartItem.price,
+          quantity: existingCartItem.quantity + quantity,
+          imgUrl: existingCartItem.imgUrl,
+          userPhone: existingCartItem.userPhone,
+          userEmail: existingCartItem.userEmail,
+          userName: existingCartItem.userName,
+          colorList: existingCartItem.colorList,
+          sizeList: existingCartItem.sizeList,
+          quantityList: existingCartItem.quantityList,
+        );
+      });
     } else {
       _items.putIfAbsent(
         productId,
@@ -79,9 +108,12 @@ class Cart with ChangeNotifier {
             price: price,
             quantity: quantity,
             imgUrl: imgUrl,
-            user: user,
+            userPhone: userPhone,
+            userEmail: userEmail,
+            userName: userName,
             colorList: colorList,
-            sizeList: sizeList),
+            sizeList: sizeList,
+            quantityList: quantityList),
       );
     }
     notifyListeners();
@@ -106,9 +138,12 @@ class Cart with ChangeNotifier {
               price: existingCartItem.price,
               quantity: existingCartItem.quantity - 1,
               imgUrl: existingCartItem.imgUrl,
-              user: existingCartItem.user,
+              userPhone: existingCartItem.userPhone,
+              userEmail: existingCartItem.userEmail,
+              userName: existingCartItem.userName,
               sizeList: existingCartItem.sizeList,
-              colorList: existingCartItem.colorList));
+              colorList: existingCartItem.colorList,
+              quantityList: existingCartItem.quantityList));
     } else {
       _items.remove(productId);
     }

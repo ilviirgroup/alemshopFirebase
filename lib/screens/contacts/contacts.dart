@@ -1,7 +1,7 @@
 import 'package:alemshop/models/show_alert_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 
 class Contacts extends StatefulWidget {
   Contacts({Key key}) : super(key: key);
@@ -101,18 +101,9 @@ class _ContactsState extends State<Contacts> {
                           'date': DateTime.now().toString(),
                           'answer': '',
                         });
-                        Fluttertoast.showToast(
-                          msg: 'Сообщение было отправлено',
-                          // backgroundColor: Colors.black54,
-                          // textColor: Colors.white,
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          fontSize: 16.0,
-                        );
                         Navigator.pop(context);
-
-                        // _showalert.showAlertDialog(
-                        //     context, '', 'Ваше сообщение было отправлено!');
+                        _showalert.showAlertDialog(
+                            context, '', 'Ваше сообщение было отправлено!');
                       }
                     },
                     icon: Icon(

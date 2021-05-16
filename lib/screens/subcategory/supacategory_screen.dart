@@ -1,20 +1,42 @@
-import 'package:alemshop/screens/subcategory/components/subcategory_grid_view.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
 
-final _firestore = FirebaseFirestore.instance;
+import 'package:alemshop/screens/subcategory/components/subcategory_grid_view.dart';
+import 'package:alemshop/models/category_provider.dart';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+import '../../service.dart';
 
 class SubCategory extends StatefulWidget {
-  final int subcategory;
+  final int catId;
   final int genderFilter;
-  SubCategory({this.subcategory, this.genderFilter = 0});
+  SubCategory({this.catId, this.genderFilter = 0});
 
   @override
   _SubCategoryState createState() => _SubCategoryState();
 }
 
 class _SubCategoryState extends State<SubCategory> {
+  List<SubCategories> parseData(String response) {
+    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+    return parsed
+        .map<SubCategories>((json) => SubCategories.fromMap(json))
+        .toList();
+  }
+
+  Future<List<SubCategories>> fetchData() async {
+    http.Response res = await http
+        .get(Uri.parse("http://alemshop.com.tm:8000/subcategory-list/"));
+    if (res.statusCode == 200) {
+      return parseData(res.body);
+    } else
+      throw Exception("Unable to fetch subcategories from server");
+  }
+
   int subId;
+  String categoryUrl;
 
   @override
   void initState() {
@@ -29,9 +51,11 @@ class _SubCategoryState extends State<SubCategory> {
 
   @override
   Widget build(BuildContext context) {
-    print(subId);
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('subcategory').snapshots(),
+    // final subCategoryProvider = Provider.of<Categories>(context);
+    categoryUrl = 'http://alemshop.com.tm:8000/category-list/${widget.catId}';
+
+    return FutureBuilder(
+      future: fetchData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -40,19 +64,20 @@ class _SubCategoryState extends State<SubCategory> {
             ),
           );
         }
-        final categories = snapshot.data.docs.reversed;
-        List<GestureDetector> subCategoryList = [];
-        for (var categoryId in categories) {
-          final category = categoryId.data()['category'];
-          final name = categoryId.data()['name'];
-          final id = categoryId.data()['id'];
 
-          if (category == widget.subcategory) {
+        final subCategories = snapshot.data;
+        List<GestureDetector> subCategoryList = [];
+        for (var item in subCategories) {
+          final category = item.category;
+          final name = item.name;
+          final id = item.id;
+          print('kategoriya $category');
+          if (category == categoryUrl) {
             if (subId == null) {
               subId = id;
             }
-            final categoryitem = subcategoryButton(name: name, id: id);
-            subCategoryList.add(categoryitem);
+            final subCategoryitem = subcategoryButton(name: name, id: id);
+            subCategoryList.add(subCategoryitem);
           }
         }
 

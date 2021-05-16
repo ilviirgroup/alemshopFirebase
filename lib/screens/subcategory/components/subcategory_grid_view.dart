@@ -1,80 +1,126 @@
-import 'package:alemshop/screens/category_screen/components/category_item.dart';
-import 'package:alemshop/screens/subcategory/components/subcategory_item.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-final _firestore = FirebaseFirestore.instance;
+import 'package:alemshop/screens/subcategory/components/subcategory_item.dart';
+import 'package:alemshop/service.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SubCategoryGridView extends StatelessWidget {
   final int subId;
   final int gender;
   SubCategoryGridView({this.subId, this.gender});
+  int genderFilter = 1;
+  List<Products> parseData(String response) {
+    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+    return parsed.map<Products>((json) => Products.fromMap(json)).toList();
+  }
+
+  Future<List<Products>> fetchData() async {
+    http.Response res =
+        await http.get(Uri.parse("http://alemshop.com.tm:8000/product-list/"));
+    if (res.statusCode == 200) {
+      return parseData(res.body);
+    } else
+      throw Exception("Unable to fetch data from server");
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('products').snapshots(),
+    print(gender);
+    final subCategoryUrl =
+        'http://alemshop.com.tm:8000/subcategory-list/$subId';
+
+    return FutureBuilder(
+      future: fetchData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.lightBlueAccent,
-            ),
+            child: Text('No data'),
+            // child: CircularProgressIndicator(
+            //   backgroundColor: Colors.lightBlueAccent,
+            // ),
           );
         }
 
-        final categories = snapshot.data.docs.reversed;
-        List<SubCategoryItem> categoryList = [];
+        final products = snapshot.data;
 
-        for (var category in categories) {
-          final urls = category.data()['url'];
-          final url = urls[0];
-          final id = category.data()['subcategory'];
-          final name = category.data()['name'];
-          final status = category.data()['status'];
-          final description = category.data()['description'];
-          final colors = category.data()['colors'];
-          final sizes = category.data()['size'];
-          final alemid = category.data()['alemid'];
-          final price = category.data()['price'];
-          final genderFilter = category.data()['gender'];
+        List<SubCategoryItem> productList = [];
+
+        for (var item in products) {
+          final id = item.id;
+          final name = item.name;
+          final status = item.status;
+          final description = item.description;
+          final colors = item.colors;
+          final sizes = item.size;
+          final alemid = item.alemid;
+          final price = item.price;
+          final brand = item.brand;
+          final isNew = item.isNew;
+          // final genderFilter = item.gender;
+          final subCategoryId = item.subCategory;
+          final url = item.photo;
+          final photo1 = item.photo1;
+          final photo2 = item.photo2;
+          final photo3 = item.photo3;
+          final photo4 = item.photo4;
+          List urls = [];
+          if (photo1 != null) {
+            urls.add(photo1);
+          }
+          if (photo2 != null) {
+            urls.add(photo2);
+          }
+          if (photo3 != null) {
+            urls.add(photo3);
+          }
+          if (photo4 != null) {
+            urls.add(photo4);
+          }
 
           if (gender == 0) {
-            if (id == subId) {
+            if (subCategoryId == subCategoryUrl) {
               final categoryitem = SubCategoryItem(
+                isNew: isNew,
+                brand: brand,
+                gender: gender.toString(),
                 url: url,
                 name: name,
                 colors: colors,
                 sizes: sizes,
                 urls: urls,
-                subId: id,
+                subId: subId,
                 alemid: alemid,
                 price: price,
                 status: status,
                 description: description,
               );
-              categoryList.add(categoryitem);
+              productList.add(categoryitem);
             }
           } else {
-            if (id == subId && gender == genderFilter) {
+            if (subCategoryId == subId && gender == genderFilter) {
               final categoryitem = SubCategoryItem(
+                isNew: isNew,
+                brand: brand,
+                gender: gender.toString(),
                 url: url,
                 name: name,
                 colors: colors,
                 sizes: sizes,
                 urls: urls,
-                subId: id,
+                subId: subId,
                 alemid: alemid,
                 price: price,
                 status: status,
                 description: description,
               );
-              categoryList.add(categoryitem);
+
+              productList.add(categoryitem);
             }
           }
         }
         return GridView(
-          children: categoryList,
+          children: productList,
           padding: EdgeInsets.all(10.0),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,

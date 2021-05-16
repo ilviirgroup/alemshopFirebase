@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-final _firestore = FirebaseFirestore.instance
-    .collection('orders')
-    .orderBy('id', descending: true)
-    .snapshots();
+// final _firestore = FirebaseFirestore.instance
+//     .collection('orders')
+//     .orderBy('id', descending: true)
+//     .snapshots();
 
 class MyOrders extends StatefulWidget {
   MyOrders({Key key}) : super(key: key);
@@ -39,7 +39,7 @@ class _MyOrdersState extends State<MyOrders> {
       ),
       body: (phone.isNotEmpty)
           ? StreamBuilder(
-              stream: _firestore,
+              // stream:,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
@@ -50,7 +50,7 @@ class _MyOrdersState extends State<MyOrders> {
                     padding: EdgeInsets.all(10.0),
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
-                      DocumentSnapshot orders = snapshot.data.docs[index];
+                      var orders = snapshot.data.docs[index];
 
                       final user = orders.data()['user'];
 

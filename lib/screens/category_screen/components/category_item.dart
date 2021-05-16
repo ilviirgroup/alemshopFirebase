@@ -1,16 +1,14 @@
-import 'package:alemshop/screens/home_screen.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-final storage = FirebaseStorage.instance;
+import 'package:alemshop/screens/home_screen.dart';
 
 class CategoryItem extends StatelessWidget {
-  final String url;
+  final int catId;
   final String name;
-  final int subcategory;
+  final String photo;
   final bool man;
   final bool woman;
-  CategoryItem({this.url, this.name, this.subcategory, this.man, this.woman});
+  CategoryItem({this.catId, this.name, this.photo, this.man, this.woman});
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -23,13 +21,13 @@ class CategoryItem extends StatelessWidget {
                 MaterialPageRoute(
                     builder: (context) => HomeScreen(
                           category: false,
-                          subcategory: subcategory,
+                          catId: catId,
                           woman: woman,
                           man: man,
                         )));
           },
-          child: (url != null)
-              ? Image.network(url)
+          child: (photo != null)
+              ? Image.network(photo)
               : Center(child: Text('Нет изображения')),
         ),
         footer: GridTileBar(

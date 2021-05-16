@@ -1,17 +1,22 @@
+import 'dart:convert';
 import 'package:alemshop/models/cart.dart';
 
 import 'package:alemshop/screens/product_detail/product_detail_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alemshop/models/show_alert_dialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
-final _firestore = FirebaseFirestore.instance;
-final user = FirebaseAuth.instance;
+// final _firestore = FirebaseFirestore.instance;
+// final user = FirebaseAuth.instance;
 
 class SubCategoryItem extends StatefulWidget {
+  final bool isNew;
+  final String brand;
+  final String gender;
   final int subId;
   final int price;
   final String url;
@@ -23,7 +28,10 @@ class SubCategoryItem extends StatefulWidget {
   final List sizes;
   final List urls;
   SubCategoryItem(
-      {this.url,
+      {this.isNew,
+      this.brand,
+      this.gender,
+      this.url,
       this.name,
       this.colors,
       this.sizes,
@@ -82,25 +90,42 @@ class _SubCategoryItemState extends State<SubCategoryItem> {
           leading: IconButton(
             icon: Icon(Icons.favorite),
             onPressed: () {
-              if (user.currentUser != null) {
-                _firestore.collection('favorites').add({
-                  'status': widget.status,
-                  'description': widget.description,
-                  'url': widget.url,
-                  'subcategory': widget.subId,
-                  'price': widget.price,
-                  'alemid': widget.alemid,
-                  'name': widget.name,
-                  'colors': widget.colors,
-                  'sizes': widget.sizes,
-                  'urls': widget.urls,
-                  'login': user.currentUser.phoneNumber
+              // if (user.currentUser != null) {
+              Uri uri = Uri.parse('http://alemshop.com.tm:8000/favorite-list/');
+              http
+                  .post(uri,
+                      headers: <String, String>{
+                        'Connection-Type': 'application/json; charset=UTF-8',
+                        'connection': 'keep-alive'
+                      },
+                      body: jsonEncode(<String, dynamic>{
+                        'name': widget.name,
+                        'user': user.currentUser.phoneNumber,
+                        'date': DateTime.now().toString(),
+                        'ai': widget.alemid,
+                        'brand': widget.brand,
+                        'gender': widget.gender,
+                        'status': widget.status,
+                        'color': widget.colors,
+                        'size': widget.sizes,
+                        'subcategory': widget.subId,
+                        'category': 2,
+                        // 'description': widget.description,
+                        'url': widget.url,
+                        // 'price': widget.price,
+                        // 'urls': widget.urls,
+                      }))
+                  .then((http.Response res) {
+                setState(() {
+                  print(res);
                 });
-                _showalert.showAlertDialog(
-                    context, "Избранное ", "Добавлено в избранное");
-              } else {
-                _showalert.showAlertDialog(context, "", "Пожалуйста войдите");
-              }
+              });
+
+              _showalert.showAlertDialog(
+                  context, "Избранное ", "Добавлено в избранное");
+              // } else {
+              //   _showalert.showAlertDialog(context, "", "Пожалуйста войдите");
+              // }
             },
           ),
           backgroundColor: Colors.black45,
