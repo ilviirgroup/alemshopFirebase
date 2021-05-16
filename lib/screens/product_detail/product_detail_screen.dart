@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:alemshop/models/cart.dart';
-<<<<<<< HEAD
 
 import 'package:alemshop/screens/product_detail/gallery_page.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -12,18 +11,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-=======
-import 'package:alemshop/screens/login_and_regis/Regis_page.dart';
-import 'package:alemshop/screens/product_detail/gallery_page.dart';
-import 'package:carousel_pro/carousel_pro.dart';
-import 'package:carousel_slider/carousel_options.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
->>>>>>> 932453198e22465e88897da6f287eeec6d17c279
 import 'package:provider/provider.dart';
 import 'package:alemshop/models/show_alert_dialog.dart';
 import 'package:alemshop/service.dart';
