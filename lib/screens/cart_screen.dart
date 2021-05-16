@@ -133,7 +133,8 @@ class _OrderButtonState extends State<OrderButton> {
                 onPressed: () {
                   if (FirebaseAuth.instance.currentUser != null) {
                     cart.items.forEach((key, value) {
-                      Uri uri = Uri.parse("http://127.0.0.1:8000/order-list/");
+                      Uri uri =
+                          Uri.parse("http://alemshop.com.tm:8000/order-list/");
                       http.post(uri,
                           headers: <String, String>{
                             'Conection-Type': 'application/json; charset=UTF-8',

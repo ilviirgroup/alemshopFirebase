@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,16 @@ import 'package:flutter/material.dart';
 //     .collection('orders')
 //     .orderBy('id', descending: true)
 //     .snapshots();
+=======
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+final _firestore = FirebaseFirestore.instance
+    .collection('orders')
+    .orderBy('id', descending: true)
+    .snapshots();
+>>>>>>> 932453198e22465e88897da6f287eeec6d17c279
 
 class MyOrders extends StatefulWidget {
   MyOrders({Key key}) : super(key: key);
