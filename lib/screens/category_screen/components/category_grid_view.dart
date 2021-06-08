@@ -12,20 +12,6 @@ class CategoryGridView extends StatelessWidget {
   final bool woman;
   CategoryGridView({this.man, this.woman});
 
-  // List<Category> parseData(response) {
-  //   final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
-  //   return parsed.map<Category>((json) => Category.fromMap(json)).toList();
-  // }
-
-  // Future<List<Category>> fetchData() async {
-  //   http.Response res =
-  //       await http.get(Uri.parse("http://127.0.0.1:8000/category-list/"));
-  //   if (res.statusCode == 200) {
-  //     return parseData(res.body);
-  //   } else
-  //     throw Exception("Unable fetch data from server");
-  // }
-
   @override
   Widget build(BuildContext context) {
     final categoryProvider = Provider.of<Categories>(context);
