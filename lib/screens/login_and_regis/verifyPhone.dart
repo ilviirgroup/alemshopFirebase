@@ -95,14 +95,14 @@ class _VerifyPhoneState extends State<VerifyPhone> {
           print(e.message);
         },
         codeSent: (String verficationID, int resendToken) {
-          setState(() {
-            _verificationCode = verficationID;
-          });
+          // setState(() {
+          _verificationCode = verficationID;
+          // });
         },
         codeAutoRetrievalTimeout: (String verificationID) {
-          setState(() {
-            _verificationCode = verificationID;
-          });
+          // setState(() {
+          _verificationCode = verificationID;
+          // });
         },
         timeout: Duration(seconds: 120));
   }

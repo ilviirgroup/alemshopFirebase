@@ -29,7 +29,7 @@ class CategoryGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryProvider = Provider.of<Categories>(context);
-    print(categoryProvider);
+    
     return FutureBuilder(
       future: categoryProvider.getCategories(),
       builder: (context, snapshot) {

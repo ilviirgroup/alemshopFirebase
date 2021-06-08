@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:alemshop/screens/home_screen.dart';
 import 'package:alemshop/screens/login_and_regis/verifyPhone.dart';
+import 'package:alemshop/service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:alemshop/screens/login_and_regis/cons.dart';
 import 'package:alemshop/models/show_alert_dialog.dart';
 
@@ -25,6 +29,34 @@ class _LoginPageState extends State<LoginPage> {
   String phoneNumber;
   bool isPhoneVerified = false;
   String phone = '';
+  String url = 'http://alemshop.com.tm:8000/user-list/';
+
+  // List<Users> parseData(String response) {
+  //   final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  //   return parsed.map<Users>((json) => Users.fromMap(json)).toList();
+  // }
+
+  // Future<List<Users>> fetchData() async {
+  //   http.Response res =
+  //       await http.get(Uri.parse("http://alemshop.com.tm:8000/user-list/"));
+  //   if (res.statusCode <= 200 && res.statusCode < 299) {
+  //     return parseData(res.body);
+  //   } else
+  //     throw Exception("Unable to fetch data from server");
+  // }
+
+  Future<void> getUsers() async {
+    http.Response res = await http.get(Uri.parse(url));
+    print(res.statusCode);
+    var data = jsonDecode(res.body).cast<Map<String, dynamic>>();
+    for (var i = 0; i < data.length; i++) {
+      if (username == data[i]['username'] && password == data[i]['password'])
+        setState(() {
+          phoneNumber = data[i]['phone'];
+          existingPassword = data[i]['password'];
+        });
+    }
+  }
 
   void _toggleVisibility() {
     setState(() {
@@ -52,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(phone);
     return SafeArea(
       child: Scaffold(
         body: (phone.isNotEmpty)
@@ -127,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                                             setState(() {
                                               username = value;
                                             });
+                                            getUsers();
                                           },
                                           keyboardType:
                                               TextInputType.emailAddress,
@@ -153,6 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                                               setState(() {
                                                 password = value;
                                               });
+                                              getUsers();
                                             },
                                             decoration: InputDecoration(
                                               hintText: "Пароль",
@@ -193,80 +228,84 @@ class _LoginPageState extends State<LoginPage> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(50),
                                       color: Colors.orange[300]),
-                                  child: StreamBuilder<QuerySnapshot>(
-                                      stream: _firestore.snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              backgroundColor:
-                                                  Colors.lightBlueAccent,
-                                            ),
-                                          );
-                                        }
-                                        final users = snapshot.data.docs;
-                                        for (var user in users) {
-                                          final existingUsername =
-                                              user.data()['username'];
-                                          final existingPass =
-                                              user.data()['password'];
-                                          final existingPhoneNumber =
-                                              user.data()['phone'];
-                                          if (username == existingUsername) {
-                                            username = existingUsername;
-                                            existingPassword = existingPass;
-                                            phoneNumber = existingPhoneNumber;
-                                          }
-                                        }
-                                        return Center(
-                                          child: FlatButton(
-                                            child: Text(
-                                              "Авторизоваться",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            onPressed: () {
-                                              if (password ==
-                                                  existingPassword) {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            VerifyPhone(
-                                                              phone:
-                                                                  phoneNumber,
-                                                              phoneVerification:
-                                                                  phoneVerification,
-                                                            )));
+                                  child:
+                                      // FutureBuilder(
+                                      //     future: fetchData(),
+                                      //     builder: (context, snapshot) {
+                                      //       if (!snapshot.hasData) {
+                                      //         return Center(
+                                      //           child:
+                                      // CircularProgressIndicator(
+                                      //   backgroundColor:
+                                      //       Colors.lightBlueAccent,
+                                      // ),
+                                      //         );
+                                      //       }
+                                      //       final users = snapshot.data;
+                                      //       for (var user in users) {
+                                      //         final name = user.userName;
+                                      //         final pass = user.password;
+                                      //         final number = user.userPhone;
+                                      //         if (username == name &&
+                                      //             password == pass) {
+                                      //           phoneNumber = number;
+                                      //           existingPassword = pass;
+                                      //         }
+                                      //       }
+                                      // return
+                                      Center(
+                                    child: FlatButton(
+                                      child: Text(
+                                        "Авторизоваться",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      onPressed: () {
+                                        print(existingPassword);
+                                        print(phoneNumber);
+                                        if (password == existingPassword) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      VerifyPhone(
+                                                        phone: phoneNumber,
+                                                        phoneVerification:
+                                                            phoneVerification,
+                                                      ))).then((value) =>
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          HomeScreen())));
 
-                                                // FirebaseAuth.instance
-                                                //     .signInWithPhoneNumber(
-                                                //         phoneNumber: phoneNumber,
-                                                //         )
-                                                //     .then((value) => Navigator.push(
-                                                //         context,
-                                                //         MaterialPageRoute(
-                                                //             builder: (context) =>
-                                                //                 HomeScreen())));
-
-                                              } else {
-                                                _showAlert.showAlertDialog(
-                                                    context,
-                                                    'Ошибка',
-                                                    'Неверный ник или пароль');
-                                              }
-                                              if (isPhoneVerified) {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            HomeScreen()));
-                                              }
-                                            },
-                                          ),
-                                        );
-                                      }),
+                                          // FirebaseAuth.instance
+                                          //     .signInWithPhoneNumber(
+                                          //       phoneNumber: phonenumber,
+                                          //     )
+                                          //     .then((value) => Navigator.push(
+                                          //         context,
+                                          //         MaterialPageRoute(
+                                          //             builder: (context) =>
+                                          //                 HomeScreen())));
+                                        } else {
+                                          _showAlert.showAlertDialog(
+                                              context,
+                                              'Ошибка',
+                                              'Неверный ник или пароль');
+                                        }
+                                        if (isPhoneVerified) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HomeScreen()));
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  // }),
                                 ),
                                 // ),
                                 SizedBox(

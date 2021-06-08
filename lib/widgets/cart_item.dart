@@ -8,7 +8,7 @@ class CartItem extends StatelessWidget {
   final String productId;
   final double price;
   final int quantity;
-  final String title;
+  final Set title;
   final String imgUrl;
 
   CartItem(
@@ -23,7 +23,7 @@ class CartItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: ValueKey(id),
+      key: UniqueKey(),
       background: Container(
         color: Theme.of(context).errorColor,
         child: Icon(
@@ -76,7 +76,7 @@ class CartItem extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: ListTile(
             leading: Image.network(imgUrl),
-            title: Text(title),
+            title: Text(title.first),
             subtitle: Text('Cумма: ${(price * quantity)} TMT'),
             trailing: Text('$quantity x'),
           ),

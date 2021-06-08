@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:alemshop/models/show_alert_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 
 class Contacts extends StatefulWidget {
   Contacts({Key key}) : super(key: key);
@@ -11,15 +14,14 @@ class Contacts extends StatefulWidget {
 }
 
 class _ContactsState extends State<Contacts> {
-  String name = '';
+  String email = '';
   String phone = '';
   String message = '';
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DocumentReference docRef;
+  Dio dio = new Dio(BaseOptions(contentType: "application/json"));
+  String url = 'http://alemshop.com.tm:8000/message-list/"';
   final _showalert = ShowAlert();
-  // final TextEditingController nameController = TextEditingController();
-  // final TextEditingController phoneController = TextEditingController();
-  // final TextEditingController messageController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +44,10 @@ class _ContactsState extends State<Contacts> {
                     }
                   },
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(), labelText: 'Ваша имя'),
+                      border: OutlineInputBorder(),
+                      labelText: 'Электронная почта'),
                   onChanged: (val) {
-                    name = val;
+                    email = val;
                   },
                 ),
                 SizedBox(height: 12.0),
@@ -90,17 +93,22 @@ class _ContactsState extends State<Contacts> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState.validate()) {
-                        docRef = FirebaseFirestore.instance
-                            .collection('messages')
-                            .doc();
-                        docRef.set({
-                          'documentId': docRef.id,
-                          'name': name,
-                          'phone': phone,
-                          'message': message,
-                          'date': DateTime.now().toString(),
-                          'answer': '',
+                        http
+                            .post(Uri.parse(url),
+                                headers: <String, String>{
+                                  'Content-Type': 'application/json',
+                                  'connection': 'keep-alive'
+                                },
+                                body: jsonEncode(<String, dynamic>{
+                                  'useremail': email,
+                                  'userphone': phone,
+                                  'text': message,
+                                  'date': DateTime.now(),
+                                }))
+                            .then((http.Response res) {
+                          print(res.statusCode);
                         });
+
                         Navigator.pop(context);
                         _showalert.showAlertDialog(
                             context, '', 'Ваше сообщение было отправлено!');

@@ -2,9 +2,9 @@
     package="com.example.alemshop">
    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="alemshop"
-        android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
+       android:icon="@mipmap/ic_launcher"
+       android:label="alemshop"
+       android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

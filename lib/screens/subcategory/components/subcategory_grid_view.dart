@@ -7,9 +7,9 @@ import 'package:http/http.dart' as http;
 
 class SubCategoryGridView extends StatelessWidget {
   final int subId;
-  final int gender;
+  final String gender;
   SubCategoryGridView({this.subId, this.gender});
-  int genderFilter = 1;
+
   List<Products> parseData(String response) {
     final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
     return parsed.map<Products>((json) => Products.fromMap(json)).toList();
@@ -26,7 +26,6 @@ class SubCategoryGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(gender);
     final subCategoryUrl =
         'http://alemshop.com.tm:8000/subcategory-list/$subId';
 
@@ -35,10 +34,10 @@ class SubCategoryGridView extends StatelessWidget {
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
-            child: Text('No data'),
-            // child: CircularProgressIndicator(
-            //   backgroundColor: Colors.lightBlueAccent,
-            // ),
+            // child: Text('No data'),
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.lightBlueAccent,
+            ),
           );
         }
 
@@ -57,62 +56,66 @@ class SubCategoryGridView extends StatelessWidget {
           final price = item.price;
           final brand = item.brand;
           final isNew = item.isNew;
-          // final genderFilter = item.gender;
+          final genderFilter = item.gender;
           final subCategoryId = item.subCategory;
+          final category = item.category;
           final url = item.photo;
           final photo1 = item.photo1;
           final photo2 = item.photo2;
           final photo3 = item.photo3;
           final photo4 = item.photo4;
-          List urls = [];
-          if (photo1 != null) {
-            urls.add(photo1);
-          }
-          if (photo2 != null) {
-            urls.add(photo2);
-          }
-          if (photo3 != null) {
-            urls.add(photo3);
-          }
-          if (photo4 != null) {
-            urls.add(photo4);
-          }
+          final photo5 = item.photo5;
+          final photo6 = item.photo6;
 
-          if (gender == 0) {
+          if (gender == 'none') {
             if (subCategoryId == subCategoryUrl) {
               final categoryitem = SubCategoryItem(
                 isNew: isNew,
                 brand: brand,
-                gender: gender.toString(),
+                gender: genderFilter,
                 url: url,
+                photo1: photo1,
+                photo2: photo2,
+                photo3: photo3,
+                photo4: photo4,
+                photo5: photo5,
+                photo6: photo6,
                 name: name,
                 colors: colors,
                 sizes: sizes,
-                urls: urls,
+                category: category,
                 subId: subId,
                 alemid: alemid,
                 price: price,
                 status: status,
                 description: description,
+                subCategoryId: subCategoryId,
               );
               productList.add(categoryitem);
             }
           } else {
-            if (subCategoryId == subId && gender == genderFilter) {
+            if (subCategoryId == subCategoryUrl && gender == genderFilter) {
               final categoryitem = SubCategoryItem(
                 isNew: isNew,
                 brand: brand,
                 gender: gender.toString(),
                 url: url,
+                photo1: photo1,
+                photo2: photo2,
+                photo3: photo3,
+                photo4: photo4,
+                photo5: photo5,
+                photo6: photo6,
                 name: name,
                 colors: colors,
                 sizes: sizes,
-                urls: urls,
+                category: category,
                 subId: subId,
                 alemid: alemid,
                 price: price,
                 status: status,
                 description: description,
+                subCategoryId: subCategoryId,
               );
 
               productList.add(categoryitem);

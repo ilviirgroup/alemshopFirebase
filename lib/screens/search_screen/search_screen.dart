@@ -1,8 +1,5 @@
 import 'package:alemshop/screens/search_screen/components/search_list_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-final _firestore = FirebaseFirestore.instance;
 
 class Search extends StatefulWidget {
   @override

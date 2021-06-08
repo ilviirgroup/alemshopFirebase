@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:alemshop/models/category_provider.dart';
 import 'package:alemshop/screens/contacts/about_us.dart';
 import 'package:alemshop/screens/contacts/contacts.dart';
@@ -8,8 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
-// final user = FirebaseAuth.instance;
+final user = FirebaseAuth.instance;
 // final _firestore = FirebaseFirestore.instance;
 
 class AppDrawer extends StatefulWidget {
@@ -24,25 +27,41 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   bool filterMan;
   bool filterWoman;
-  String userName = '';
+  bool update;
+  var userName = '';
   @override
   void initState() {
-    // if (user.currentUser != null) {
-    //   userName = user.currentUser.phoneNumber;
-    // } else {
-    //   userName = "";
-    // }
+    if (user.currentUser != null) {
+      userName = user.currentUser.phoneNumber;
+    } else {
+      userName = "";
+    }
     filterWoman = widget.woman;
     filterMan = widget.man;
     super.initState();
+    getUpdate();
   }
 
-  // void _singOut() {
-  //   FirebaseAuth.instance.signOut();
-  // }
+  void getUpdate() async {
+    try {
+      http.Response res =
+          await http.get(Uri.parse('http://alemshop.com.tm:8000/update-list/'));
+      var data = jsonDecode(res.body);
+      setState(() {
+        update = data[0]['update'];
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _singOut() {
+    FirebaseAuth.instance.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(update);
     final categoryProvider = Provider.of<Categories>(context);
     return Drawer(
       child: ListView(
@@ -83,6 +102,25 @@ class _AppDrawerState extends State<AppDrawer> {
               ],
             ),
           ),
+          update != null
+              ? ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomeScreen(
+                                  category: true,
+                                )));
+                  },
+                  title: Text(
+                    'Обновление доступно',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  leading: Icon(Icons.warning),
+                )
+              : Container(),
+
           // StreamBuilder<QuerySnapshot>(
           //   stream: _firestore.collection('update').snapshots(),
           //   builder: (context, snapshot) {
@@ -162,21 +200,14 @@ class _AppDrawerState extends State<AppDrawer> {
                 style: TextStyle(fontWeight: FontWeight.w600)),
             leading: Icon(Icons.shop),
           ),
-          // ListTile(
-          //     onTap: () {
-          //       Navigator.pop(context);
-          //       user.signOut();
-          //     },
-          //     title:
-          //         Text('Выйти', style: TextStyle(fontWeight: FontWeight.w600)),
-          //     leading: Icon(Icons.logout)),
-          // ListTile(
-          //     onTap: () {
-          //       _singOut();
-          //     },
-          //     title:
-          //         Text('Выйти', style: TextStyle(fontWeight: FontWeight.w600)),
-          //     leading: Icon(Icons.logout)),
+
+          ListTile(
+              onTap: () {
+                _singOut();
+              },
+              title:
+                  Text('Выйти', style: TextStyle(fontWeight: FontWeight.w600)),
+              leading: Icon(Icons.logout)),
           Divider(),
           FutureBuilder(
             future: categoryProvider.getCategories(),

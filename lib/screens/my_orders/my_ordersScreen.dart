@@ -1,11 +1,10 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import 'package:alemshop/service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-// final _firestore = FirebaseFirestore.instance
-//     .collection('orders')
-//     .orderBy('id', descending: true)
-//     .snapshots();
 
 class MyOrders extends StatefulWidget {
   MyOrders({Key key}) : super(key: key);
@@ -15,6 +14,40 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
+  List<Orders> parseData(String response) {
+    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+    return parsed.map<Orders>((json) => Orders.fromMap(json)).toList();
+  }
+
+  Future<List<Orders>> fetchData() async {
+    http.Response res =
+        await http.get(Uri.parse("http://alemshop.com.tm:8000/order-list/"));
+    if (res.statusCode == 200) {
+      return parseData(res.body);
+    } else
+      throw Exception("Unable to fetch data from server");
+  }
+
+  Future<void> getColors() async {
+    http.Response res =
+        await http.get(Uri.parse('http://alemshop.com.tm:8000/color-list/'));
+    var body = jsonDecode(res.body);
+    setState(() {
+      colorlar = body;
+    });
+  }
+
+  Future<void> getSize() async {
+    http.Response res =
+        await http.get(Uri.parse('http://alemshop.com.tm:8000/size-list/'));
+    var body = jsonDecode(res.body);
+    setState(() {
+      sizelar = body;
+    });
+  }
+
+  List colorlar = [];
+  List sizelar = [];
   String phone = '';
 
   @override
@@ -27,19 +60,20 @@ class _MyOrdersState extends State<MyOrders> {
     } else {
       phone = '';
     }
+    getSize();
+    getColors();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(phone);
     return Scaffold(
       backgroundColor: Colors.lightBlue[100],
       appBar: AppBar(
         title: Text('Мои заказы'),
       ),
       body: (phone.isNotEmpty)
-          ? StreamBuilder(
-              // stream:,
+          ? FutureBuilder(
+              future: fetchData(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
@@ -48,40 +82,51 @@ class _MyOrdersState extends State<MyOrders> {
                 }
                 return ListView.builder(
                     padding: EdgeInsets.all(10.0),
-                    itemCount: snapshot.data.docs.length,
+                    itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      var orders = snapshot.data.docs[index];
+                      var orders = snapshot.data[index];
+                      final userPhone = orders.userPhone;
+                      final userName = orders.userName;
+                      final userEmail = orders.userEmail;
+                      final alemId = orders.alemId;
+                      final name = orders.name;
+                      final quantity = orders.quantity;
+                      final sizes = orders.size;
+                      final myDateTime = orders.date.toString();
+                      final colors = orders.colors;
+                      final price = orders.price;
+                      final inProcess = orders.inProcess;
+                      final completed = orders.completed;
+                      final id = orders.id;
+                      final photo = orders.photo;
+                      var colorName = '';
+                      var sizeName = '';
+                      for (var i = 0; i < colorlar.length; i++) {
+                        var url = colorlar[i]['url'];
+                        if (url == colors[0]) {
+                          colorName = colorlar[i]['name'];
+                        }
+                      }
+                      for (var i = 0; i < sizelar.length; i++) {
+                        var url = sizelar[i]['url'];
+                        if (url == sizes[0]) {
+                          sizeName = sizelar[i]['name'];
+                        }
+                      }
 
-                      final user = orders.data()['user'];
-
-                      final alemId = orders.data()['alemid'];
-                      final name = orders.data()['name'];
-                      final totalQuantity = orders.data()['quantity'];
-                      final quantities = orders.data()['quantities'];
-                      final sizes = orders.data()['size'];
-                      final myDateTime = orders.data()['date'];
-                      final colors = orders.data()['color'];
-                      final price = orders.data()['price'];
-                      final inProcess = orders.data()['inProcess'];
-                      final completed = orders.data()['completed'];
-                      final documentId = orders.data()['documentId'];
-                      final id = orders.data()['id'];
-                      final photo = orders.data()['imgUrl'];
                       return OrderCard(
                         phone: phone,
                         alemId: alemId,
                         name: name,
-                        quantities: quantities,
-                        totalQuantity: totalQuantity,
-                        sizes: sizes,
+                        totalQuantity: quantity,
+                        sizeName: sizeName,
                         myDateTime: myDateTime,
-                        user: user,
-                        colors: colors,
+                        user: userPhone,
+                        colorName: colorName,
                         price: price,
                         inProcess: inProcess,
                         completed: completed,
                         id: id,
-                        documentId: documentId,
                         photo: photo,
                       );
                     });
@@ -97,16 +142,15 @@ class OrderCard extends StatefulWidget {
   final String phone;
   final String alemId;
   final String name;
-  final List quantities;
   final int totalQuantity;
-  final List sizes;
+  final String sizeName;
   final String myDateTime;
   final String user;
-  final List colors;
+  final String colorName;
   final double price;
   final bool inProcess;
   final bool completed;
-  final String documentId;
+
   final int id;
   final String photo;
   OrderCard(
@@ -114,16 +158,14 @@ class OrderCard extends StatefulWidget {
       this.phone,
       this.alemId,
       this.name,
-      this.quantities,
       this.totalQuantity,
-      this.sizes,
+      this.sizeName,
       this.myDateTime,
       this.user,
-      this.colors,
+      this.colorName,
       this.price,
       this.inProcess,
       this.completed,
-      this.documentId,
       this.id,
       this.photo})
       : super(key: key);
@@ -139,6 +181,7 @@ class _OrderCardState extends State<OrderCard> {
   @override
   void initState() {
     super.initState();
+
     isInProcess = widget.inProcess;
     isCompleted = widget.completed;
   }
@@ -170,15 +213,13 @@ class _OrderCardState extends State<OrderCard> {
                     ),
                     Text("AlemId: ${widget.alemId}",
                         style: TextStyle(fontSize: 16)),
-                    Text("Количество: ${widget.quantities}",
+                    Text("Количество: ${widget.totalQuantity}",
                         style: TextStyle(fontSize: 16)),
-                    Text("Общее количество: ${widget.totalQuantity}",
-                        style: TextStyle(fontSize: 16)),
-                    widget.colors != null
-                        ? Text("Цвет: ${widget.colors}",
+                    widget.colorName != null
+                        ? Text("Цвет: ${widget.colorName}",
                             style: TextStyle(fontSize: 16))
                         : Text('Цвет не выбран '),
-                    Text("Размер: ${widget.sizes}",
+                    Text("Размер: ${widget.sizeName}",
                         style: TextStyle(fontSize: 16)),
                     Row(
                       children: [

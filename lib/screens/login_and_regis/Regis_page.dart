@@ -1,12 +1,15 @@
+import 'dart:convert';
+
 import 'package:alemshop/models/show_alert_dialog.dart';
 import 'package:alemshop/screens/home_screen.dart';
 import 'package:alemshop/screens/login_and_regis/agreement.dart';
 import 'package:alemshop/screens/login_and_regis/cons.dart';
 import 'package:alemshop/screens/login_and_regis/verifyPhone.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:alemshop/service.dart';
 
 class RegPage extends StatefulWidget {
   final Function sahCals;
@@ -22,12 +25,13 @@ class _RegPageState extends State<RegPage> {
   String userName;
   String nameAndSurname;
   String phone;
+  String email;
   String password;
+  String url = 'http://alemshop.com.tm:8000/user-list/';
+  List userNames = [];
   final _showalert = ShowAlert();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   void phoneVerification() {
     setState(() {
@@ -35,15 +39,34 @@ class _RegPageState extends State<RegPage> {
     });
   }
 
-  Future<void> addUser() {
-    // Call the user's CollectionReference to add a new user
-    return users
-        .add({
-          'username': userName, // John Doe
-          'nameAndSurname': nameAndSurname, // Stokes and Sons
-          'phone': phone, // 42
-          'password': password,
-        })
+  @override
+  void initState() {
+    super.initState();
+    getUsers();
+  }
+
+  void getUsers() async {
+    http.Response res = await http.get(Uri.parse(url));
+
+    var data = jsonDecode(res.body).cast<Map<String, dynamic>>();
+    for (var i = 0; i < data.length; i++) {
+      setState(() {
+        userNames.add(data[i]['username']);
+      });
+    }
+  }
+
+  Future<void> addUser() async {
+    await http
+        .post(Uri.parse(url),
+            headers: <String, String>{'Content-Type': 'application/json'},
+            body: jsonEncode(<String, dynamic>{
+              'username': userName, // John Doe
+              'surname': nameAndSurname, // Stokes and Sons
+              'phone': phone, // 42
+              'email': email,
+              'password': password,
+            }))
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
@@ -123,61 +146,33 @@ class _RegPageState extends State<RegPage> {
                                         border: Border(
                                             bottom: BorderSide(
                                                 color: Colors.grey[200]))),
-                                    child:
-                                        //_____________________________StreamBuilder___________________
-                                        StreamBuilder(
-                                            stream: FirebaseFirestore.instance
-                                                .collection('users')
-                                                .snapshots(),
-                                            builder: (context, snapshot) {
-                                              if (!snapshot.hasData) {
-                                                return Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    backgroundColor:
-                                                        Colors.lightBlueAccent,
-                                                  ),
-                                                );
-                                              }
-                                              final users = snapshot.data.docs;
-                                              List currentUsernames = [];
-                                              for (var item in users) {
-                                                final curUsername =
-                                                    item.data()['username'];
-                                                currentUsernames
-                                                    .add(curUsername);
-                                              }
-                                              return TextFormField(
-                                                validator: (value) {
-                                                  if (value.isEmpty) {
-                                                    return 'Необходимые';
-                                                  }
-                                                },
-                                                onChanged: (val) {
-                                                  print(currentUsernames);
-                                                  if (currentUsernames
-                                                      .contains(val)) {
-                                                    _showalert.showAlertDialog(
-                                                        context,
-                                                        "Псевдоним существует",
-                                                        "Другой пользователь использует этот псевдоним");
-                                                  }
-                                                  setState(() {
-                                                    userName = val;
-                                                  });
-                                                },
-                                                keyboardType:
-                                                    TextInputType.name,
-                                                decoration: InputDecoration(
-                                                    hintText: "Псевдоним",
-                                                    hintStyle: TextStyle(
-                                                        color: Colors.grey),
-                                                    border: InputBorder.none,
-                                                    prefixIcon: Icon(
-                                                        Icons.person,
-                                                        color: Colors.orange)),
-                                              );
-                                            }),
+                                    child: TextFormField(
+                                      validator: (value) {
+                                        if (value.isEmpty) {
+                                          return 'Необходимые';
+                                        }
+                                      },
+                                      onChanged: (val) {
+                                        print(userNames);
+                                        if (userNames.contains(val)) {
+                                          _showalert.showAlertDialog(
+                                              context,
+                                              "Псевдоним существует",
+                                              "Другой пользователь использует этот псевдоним");
+                                        }
+                                        setState(() {
+                                          userName = val;
+                                        });
+                                      },
+                                      keyboardType: TextInputType.name,
+                                      decoration: InputDecoration(
+                                          hintText: "Псевдоним",
+                                          hintStyle:
+                                              TextStyle(color: Colors.grey),
+                                          border: InputBorder.none,
+                                          prefixIcon: Icon(Icons.person,
+                                              color: Colors.orange)),
+                                    ),
                                   ),
                                   Container(
                                     padding: EdgeInsets.all(10),
@@ -199,6 +194,35 @@ class _RegPageState extends State<RegPage> {
                                       keyboardType: TextInputType.name,
                                       decoration: InputDecoration(
                                           hintText: "Имя и Фамилия",
+                                          hintStyle:
+                                              TextStyle(color: Colors.grey),
+                                          border: InputBorder.none,
+                                          prefixIcon: Icon(
+                                            Icons.person_add_outlined,
+                                            color: Colors.orange,
+                                          )),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: Colors.grey[200]))),
+                                    child: TextFormField(
+                                      validator: (val) {
+                                        if (val.isEmpty) {
+                                          return 'Необходимые';
+                                        }
+                                      },
+                                      onChanged: (val) {
+                                        setState(() {
+                                          email = val;
+                                        });
+                                      },
+                                      keyboardType: TextInputType.name,
+                                      decoration: InputDecoration(
+                                          hintText: "Электронная почта",
                                           hintStyle:
                                               TextStyle(color: Colors.grey),
                                           border: InputBorder.none,

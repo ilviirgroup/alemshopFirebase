@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class CartItem {
-  final int orderId;
+  // final int orderId;
   final String id;
   final String userPhone;
   final String userEmail;
@@ -15,7 +15,7 @@ class CartItem {
   final Set quantityList;
 
   CartItem({
-    @required this.orderId,
+    // @required this.orderId,
     @required this.id,
     @required this.userPhone,
     @required this.userEmail,
@@ -31,26 +31,26 @@ class CartItem {
 }
 
 class Cart with ChangeNotifier {
-  Map<String, CartItem> _items = {};
+  Map<String, CartItem> itemlar = {};
 
   Map<String, CartItem> get items {
-    return {..._items};
+    return {...itemlar};
   }
 
   int get itemCount {
-    return _items.length;
+    return itemlar.length;
   }
 
   double get totalAmount {
     var total = 0.0;
-    _items.forEach((key, cartItem) {
+    itemlar.forEach((key, cartItem) {
       total += cartItem.price * cartItem.quantity;
     });
     return total;
   }
 
   void addItem(
-    int orderId,
+    // int orderId,
     String productId,
     double price,
     int quantity,
@@ -63,46 +63,11 @@ class Cart with ChangeNotifier {
     Set sizeList,
     Set quantityList,
   ) {
-    if (_items.containsKey(productId)) {
-      // change quantity...
-      _items.update(productId, (existingCartItem) {
-        for (var color in colorList) {
-          existingCartItem.colorList.add(color);
-        }
-        for (var size in sizeList) {
-          existingCartItem.sizeList.add(size);
-        }
-        for (var quantities in quantityList) {
-          if (quantities == existingCartItem.quantityList) {
-            existingCartItem.quantityList.add(existingCartItem.quantityList);
-          } else {
-            existingCartItem.quantityList.add(quantities);
-          }
-        }
-        print(existingCartItem.colorList);
-        print(existingCartItem.sizeList);
-        print(existingCartItem.quantityList);
-
-        return CartItem(
-          orderId: existingCartItem.orderId,
-          id: existingCartItem.id,
-          title: existingCartItem.title,
-          price: existingCartItem.price,
-          quantity: existingCartItem.quantity + quantity,
-          imgUrl: existingCartItem.imgUrl,
-          userPhone: existingCartItem.userPhone,
-          userEmail: existingCartItem.userEmail,
-          userName: existingCartItem.userName,
-          colorList: existingCartItem.colorList,
-          sizeList: existingCartItem.sizeList,
-          quantityList: existingCartItem.quantityList,
-        );
-      });
-    } else {
-      _items.putIfAbsent(
+    if (!itemlar.containsKey(productId)) {
+      itemlar.putIfAbsent(
         productId,
         () => CartItem(
-            orderId: orderId,
+            // orderId: orderId,
             id: productId,
             title: title,
             price: price,
@@ -115,24 +80,69 @@ class Cart with ChangeNotifier {
             sizeList: sizeList,
             quantityList: quantityList),
       );
+    } else {
+      // change quantity...
+      itemlar[quantity.toString()] = CartItem(
+          // orderId: orderId,
+          id: productId,
+          title: title,
+          price: price,
+          quantity: quantity,
+          imgUrl: imgUrl,
+          userPhone: userPhone,
+          userEmail: userEmail,
+          userName: userName,
+          colorList: colorList,
+          sizeList: sizeList,
+          quantityList: quantityList);
+      // itemlar.update(productId, (existingCartItem) {
+      //   return CartItem(
+      //     orderId: existingCartItem.orderId,
+      //     id: existingCartItem.id,
+      //     title: existingCartItem.title,
+      //     price: existingCartItem.price,
+      //     quantity: existingCartItem.quantity + quantity,
+      //     imgUrl: existingCartItem.imgUrl,
+      //     userPhone: existingCartItem.userPhone,
+      //     userEmail: existingCartItem.userEmail,
+      //     userName: existingCartItem.userName,
+      //     colorList: existingCartItem.colorList,
+      //     sizeList: existingCartItem.sizeList,
+      //     quantityList: existingCartItem.quantityList,
+      //   );
+
+      // for (var color in colorList) {
+      //   existingCartItem.colorList.add(color);
+      // }
+      // for (var size in sizeList) {
+      //   existingCartItem.sizeList.add(size);
+      // }
+      // for (var quantities in quantityList) {
+      //   if (quantities == existingCartItem.quantityList) {
+      //     existingCartItem.quantityList.add(existingCartItem.quantityList);
+      //   } else {
+      //     existingCartItem.quantityList.add(quantities);
+      //   }
+      // }
+      // });
     }
     notifyListeners();
   }
 
   void removeItem(String productId) {
-    _items.remove(productId);
+    itemlar.remove(productId);
     notifyListeners();
   }
 
   void removeSingleItem(String productId) {
-    if (!_items.containsKey(productId)) {
+    if (!itemlar.containsKey(productId)) {
       return;
     }
-    if (_items[productId].quantity > 1) {
-      _items.update(
+    if (itemlar[productId].quantity > 1) {
+      itemlar.update(
           productId,
           (existingCartItem) => CartItem(
-              orderId: existingCartItem.orderId,
+              // orderId: existingCartItem.orderId,
               id: existingCartItem.id,
               title: existingCartItem.title,
               price: existingCartItem.price,
@@ -145,13 +155,13 @@ class Cart with ChangeNotifier {
               colorList: existingCartItem.colorList,
               quantityList: existingCartItem.quantityList));
     } else {
-      _items.remove(productId);
+      itemlar.remove(productId);
     }
     notifyListeners();
   }
 
   void clear() {
-    _items = {};
+    itemlar = {};
     notifyListeners();
   }
 }

@@ -11,8 +11,8 @@ import '../../service.dart';
 
 class SubCategory extends StatefulWidget {
   final int catId;
-  final int genderFilter;
-  SubCategory({this.catId, this.genderFilter = 0});
+  final String genderFilter;
+  SubCategory({this.catId, this.genderFilter = 'none'});
 
   @override
   _SubCategoryState createState() => _SubCategoryState();
@@ -71,7 +71,7 @@ class _SubCategoryState extends State<SubCategory> {
           final category = item.category;
           final name = item.name;
           final id = item.id;
-          print('kategoriya $category');
+
           if (category == categoryUrl) {
             if (subId == null) {
               subId = id;

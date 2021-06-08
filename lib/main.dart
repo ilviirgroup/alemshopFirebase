@@ -1,6 +1,8 @@
 import 'package:alemshop/models/cart.dart';
 import 'package:alemshop/models/category_provider.dart';
+import 'package:alemshop/models/color_provider.dart';
 import 'package:alemshop/models/filter.dart';
+import 'package:alemshop/models/size_provider.dart';
 import 'package:alemshop/screens/home_screen.dart';
 import 'package:alemshop/screens/welcome.dart';
 
@@ -10,8 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(AlemShop());
 }
 
@@ -32,10 +34,16 @@ class AlemShop extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Filters(),
         ),
+        ChangeNotifierProvider.value(
+          value: FetchSize(),
+        ),
+        ChangeNotifierProvider.value(
+          value: FetchColor(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Alemshop',
         color: Colors.black,
         initialRoute: '/',
         routes: {

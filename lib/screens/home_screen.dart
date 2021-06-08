@@ -34,23 +34,23 @@ class _HomeScreenState extends State<HomeScreen>
   List<Map<String, Object>> _sahypalar;
   bool filterMan;
   bool filterWoman;
-  int genderFilter = 0;
+  String genderFilter = 'none';
 
   void changeGenderFilter(int gender) {
     setState(() {
       switch (gender) {
         case 1:
           filterMan = !filterMan;
-          genderFilter = 1;
+          genderFilter = 'man';
           if (filterWoman && filterMan) {
-            genderFilter = 0;
+            genderFilter = 'none';
           }
           break;
         case 2:
           filterWoman = !filterWoman;
-          genderFilter = 2;
+          genderFilter = 'women';
           if (filterWoman && filterMan) {
-            genderFilter = 0;
+            genderFilter = 'none';
           }
           break;
       }
