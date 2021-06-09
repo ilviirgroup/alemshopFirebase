@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> getUsers() async {
     http.Response res = await http.get(Uri.parse(url));
     print(res.statusCode);
-    var data = jsonDecode(res.body).cast<Map<String, dynamic>>();
+    var data = jsonDecode(utf8.decode(res.bodyBytes)).cast<Map<String, dynamic>>();
     for (var i = 0; i < data.length; i++) {
       if (username == data[i]['username'] && password == data[i]['password'])
         setState(() {

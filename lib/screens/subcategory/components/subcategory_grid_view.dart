@@ -10,8 +10,8 @@ class SubCategoryGridView extends StatelessWidget {
   final String gender;
   SubCategoryGridView({this.subId, this.gender});
 
-  List<Products> parseData(String response) {
-    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  List<Products> parseData(var res) {
+    final parsed = jsonDecode(utf8.decode(res.bodyBytes)).cast<Map<String, dynamic>>();
     return parsed.map<Products>((json) => Products.fromMap(json)).toList();
   }
 
@@ -19,7 +19,7 @@ class SubCategoryGridView extends StatelessWidget {
     http.Response res =
         await http.get(Uri.parse("http://alemshop.com.tm:8000/product-list/"));
     if (res.statusCode == 200) {
-      return parseData(res.body);
+      return parseData(res);
     } else
       throw Exception("Unable to fetch data from server");
   }

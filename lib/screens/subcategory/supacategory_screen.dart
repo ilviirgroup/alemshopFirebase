@@ -19,8 +19,8 @@ class SubCategory extends StatefulWidget {
 }
 
 class _SubCategoryState extends State<SubCategory> {
-  List<SubCategories> parseData(String response) {
-    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  List<SubCategories> parseData(var response) {
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
     return parsed
         .map<SubCategories>((json) => SubCategories.fromMap(json))
         .toList();
@@ -30,7 +30,7 @@ class _SubCategoryState extends State<SubCategory> {
     http.Response res = await http
         .get(Uri.parse("http://alemshop.com.tm:8000/subcategory-list/"));
     if (res.statusCode == 200) {
-      return parseData(res.body);
+      return parseData(res);
     } else
       throw Exception("Unable to fetch subcategories from server");
   }

@@ -87,7 +87,7 @@ class _SubCategoryItemState extends State<SubCategoryItem> {
   Future<void> getColors() async {
     for (var item in widget.colors) {
       http.Response res = await http.get(Uri.parse(item));
-      Map<String, dynamic> body = jsonDecode(res.body);
+      Map<String, dynamic> body = jsonDecode(utf8.decode(res.bodyBytes));
       var url = body['url'];
       var name = body['name'];
       var map = {'name': name, 'url': url};
@@ -99,7 +99,7 @@ class _SubCategoryItemState extends State<SubCategoryItem> {
   Future<void> getSize() async {
     for (var item in widget.sizes) {
       http.Response res = await http.get(Uri.parse(item));
-      Map<String, dynamic> body = jsonDecode(res.body);
+      Map<String, dynamic> body = jsonDecode(utf8.decode(res.bodyBytes));
       var url = body['url'];
       var name = body['name'];
       var map = {'name': name, 'url': url};

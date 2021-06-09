@@ -24,8 +24,8 @@ class _FavCategoryGridViewState extends State<FavCategoryGridView> {
     // if (user.currentUser.phoneNumber != null) {}
   }
 
-  List parseData(String response) {
-    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  List parseData(var response) {
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
     return parsed.map((json) => Favorites.fromMap(json)).toList();
   }
 
@@ -33,7 +33,7 @@ class _FavCategoryGridViewState extends State<FavCategoryGridView> {
     http.Response res =
         await http.get(Uri.parse("http://alemshop.com.tm:8000/favorite-list/"));
     if (res.statusCode == 200) {
-      return parseData(res.body);
+      return parseData(res);
     } else
       throw Exception("Unable to fetch data from server");
   }

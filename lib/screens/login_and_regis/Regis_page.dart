@@ -48,7 +48,7 @@ class _RegPageState extends State<RegPage> {
   void getUsers() async {
     http.Response res = await http.get(Uri.parse(url));
 
-    var data = jsonDecode(res.body).cast<Map<String, dynamic>>();
+    var data = jsonDecode(utf8.decode(res.bodyBytes)).cast<Map<String, dynamic>>();
     for (var i = 0; i < data.length; i++) {
       setState(() {
         userNames.add(data[i]['username']);

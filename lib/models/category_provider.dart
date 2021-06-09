@@ -104,7 +104,7 @@ class Categories with ChangeNotifier {
 
     try {
       final response = await http.get(Uri.parse(url));
-      final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+      final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
       _categories = parsed
           .map<CategoryObject>((json) => CategoryObject.fromJson(json))
           .toList();
@@ -121,7 +121,7 @@ class Categories with ChangeNotifier {
     _sortedSubcategories = [];
     try {
       final response = await http.get(Uri.parse(url));
-      final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+      final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
       _subcategories = parsed
           .map<Subcategory>((json) => SubCategoryObject.fromJson(json))
           .toList();

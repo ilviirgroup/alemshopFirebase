@@ -8,7 +8,7 @@ class CartItem extends StatelessWidget {
   final String productId;
   final double price;
   final int quantity;
-  final Set title;
+  final String title;
   final String imgUrl;
 
   CartItem(
@@ -76,7 +76,7 @@ class CartItem extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: ListTile(
             leading: Image.network(imgUrl),
-            title: Text(title.first),
+            title: Text(title),
             subtitle: Text('Cумма: ${(price * quantity)} TMT'),
             trailing: Text('$quantity x'),
           ),

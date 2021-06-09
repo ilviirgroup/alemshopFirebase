@@ -14,8 +14,8 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
-  List<Orders> parseData(String response) {
-    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  List<Orders> parseData(var response) {
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
     return parsed.map<Orders>((json) => Orders.fromMap(json)).toList();
   }
 
@@ -23,7 +23,7 @@ class _MyOrdersState extends State<MyOrders> {
     http.Response res =
         await http.get(Uri.parse("http://alemshop.com.tm:8000/order-list/"));
     if (res.statusCode == 200) {
-      return parseData(res.body);
+      return parseData(res);
     } else
       throw Exception("Unable to fetch data from server");
   }
@@ -31,7 +31,7 @@ class _MyOrdersState extends State<MyOrders> {
   Future<void> getColors() async {
     http.Response res =
         await http.get(Uri.parse('http://alemshop.com.tm:8000/color-list/'));
-    var body = jsonDecode(res.body);
+    var body = jsonDecode(utf8.decode(res.bodyBytes));
     setState(() {
       colorlar = body;
     });
@@ -40,7 +40,7 @@ class _MyOrdersState extends State<MyOrders> {
   Future<void> getSize() async {
     http.Response res =
         await http.get(Uri.parse('http://alemshop.com.tm:8000/size-list/'));
-    var body = jsonDecode(res.body);
+    var body = jsonDecode(utf8.decode(res.bodyBytes));
     setState(() {
       sizelar = body;
     });

@@ -6,7 +6,6 @@ import 'package:alemshop/screens/product_detail/gallery_page.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:http/http.dart' as http;
 
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -165,8 +164,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     urls = photoUrls.map((ssylka) => NetworkImage(ssylka)).toList();
   }
 
-  List<Users> parseData(String response) {
-    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  List<Users> parseData(var response) {
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
     return parsed.map<Users>((json) => Users.fromMap(json)).toList();
   }
 
@@ -174,7 +173,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     http.Response res =
         await http.get(Uri.parse('http://alemshop.com.tm:8000/user-list/'));
     if (res.statusCode == 200) {
-      return parseData(res.body);
+      return parseData(res);
     } else
       throw Exception("Unable to fetch data from server");
   }

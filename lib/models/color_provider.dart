@@ -11,12 +11,12 @@ class FetchColor with ChangeNotifier {
   Future<List<Colorlar>> fetchColors() async {
     http.Response response = await http.get(url);
     if (response.statusCode == 200) {
-      return parseColors(response.body);
+      return parseColors(response);
     }
   }
 
-  List<Colorlar> parseColors(String response) {
-    final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
+  List<Colorlar> parseColors(var response) {
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
     return parsed.map<Colorlar>((json) => Colorlar.fromMap(json)).toList();
   }
 
