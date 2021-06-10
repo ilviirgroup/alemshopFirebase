@@ -67,7 +67,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int _currentColor = 0;
   int _currentSize = 0;
   int counter = 1;
-  int _counter = -1;
+  int _counter = 1;
 
   String loggedPhone = '';
   String userPhone = '';
@@ -165,7 +165,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   List<Users> parseData(var response) {
-    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes))
+        .cast<Map<String, dynamic>>();
     return parsed.map<Users>((json) => Users.fromMap(json)).toList();
   }
 
@@ -223,6 +224,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       '${widget.alemid}',
                       widget.price.toDouble(),
                       counter,
+                      _counter,
                       '${widget.name}',
                       '${widget.url}',
                       '$userPhone',
@@ -232,6 +234,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       selSize,
                       quantityList,
                     );
+                    _counter++;
                     for (var i = 0; i < cart.items.length; i++) {
                       print(cart.items.values.toList()[i].colorList);
 

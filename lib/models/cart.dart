@@ -54,6 +54,7 @@ class Cart with ChangeNotifier {
     String productId,
     double price,
     int quantity,
+    int counter,
     String title,
     String imgUrl,
     String userPhone,
@@ -82,7 +83,8 @@ class Cart with ChangeNotifier {
       );
     } else {
       // change quantity...
-      itemlar[quantity.toString()] = CartItem(
+
+      itemlar['$productId + $counter'] = CartItem(
           // orderId: orderId,
           id: productId,
           title: title,
@@ -95,6 +97,7 @@ class Cart with ChangeNotifier {
           colorList: colorList,
           sizeList: sizeList,
           quantityList: quantityList);
+
       // itemlar.update(productId, (existingCartItem) {
       //   return CartItem(
       //     orderId: existingCartItem.orderId,
