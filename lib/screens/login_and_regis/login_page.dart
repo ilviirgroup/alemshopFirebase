@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   String phoneNumber;
   bool isPhoneVerified = false;
   String phone = '';
-  String url = 'http://alemshop.com.tm:8000/user-list/';
+  String url = 'http://www.alemshop.com.tm:8000/user-list/';
 
   // List<Users> parseData(String response) {
   //   final parsed = jsonDecode(response).cast<Map<String, dynamic>>();

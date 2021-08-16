@@ -31,7 +31,7 @@ class _FavCategoryGridViewState extends State<FavCategoryGridView> {
 
   Future<List> fetchData() async {
     http.Response res =
-        await http.get(Uri.parse("http://alemshop.com.tm:8000/favorite-list/"));
+        await http.get(Uri.parse("http://www.alemshop.com.tm:8000/favorite-list/"));
     if (res.statusCode == 200) {
       return parseData(res);
     } else

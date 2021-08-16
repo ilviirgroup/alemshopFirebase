@@ -86,30 +86,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   List<NetworkImage> urls;
 
-  // void setColor(String selectedColor) {
-  //   setState(() {
-  //     selColor.add(selectedColor);
-  //   });
-  // }
-
-  // void removeColor(String selectedColor) {
-  //   setState(() {
-  //     selColor.remove(selectedColor);
-  //   });
-  // }
-
-  // void setSize(String selectedSize) {
-  //   setState(() {
-  //     selSize.add(selectedSize);
-  //   });
-  // }
-
-  // void removeSize(String selectedSize) {
-  //   setState(() {
-  //     selSize.remove(selectedSize);
-  //   });
-  // }
-
   List photoUrls = [];
 
   @override
@@ -141,26 +117,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       photoUrls.add(widget.photo5);
     }
 
-    // colorList = widget.colorTypes.map((e) {
-    //   _counter++;
-    //   return ProductListTile(
-    //     name: e,
-    //     checkBox: false,
-    //     setColor: setColor,
-    //     currentColor: _counter,
-    //     removeColor: removeColor,
-    //   );
-    // }).toList();
-    // sizeList = widget.sizeTypes.map((e) {
-    //   _counter++;
-    //   return ProductListTile(
-    //     name: e,
-    //     checkBox: false,
-    //     setColor: setSize,
-    //     currentColor: _counter,
-    //     removeColor: removeSize,
-    //   );
-    // }).toList();
     urls = photoUrls.map((ssylka) => NetworkImage(ssylka)).toList();
   }
 
@@ -172,7 +128,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Future<List<Users>> fetchData() async {
     http.Response res =
-        await http.get(Uri.parse('http://alemshop.com.tm:8000/user-list/'));
+        await http.get(Uri.parse('http://www.alemshop.com.tm:8000/user-list/'));
     if (res.statusCode == 200) {
       return parseData(res);
     } else

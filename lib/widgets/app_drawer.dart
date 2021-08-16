@@ -45,7 +45,7 @@ class _AppDrawerState extends State<AppDrawer> {
   void getUpdate() async {
     try {
       http.Response res =
-          await http.get(Uri.parse('http://alemshop.com.tm:8000/update-list/'));
+          await http.get(Uri.parse('http://www.alemshop.com.tm:8000/update-list/'));
       var data = jsonDecode(utf8.decode(res.bodyBytes));
       setState(() {
         update = data[0]['update'];

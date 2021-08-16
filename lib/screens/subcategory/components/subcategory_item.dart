@@ -108,21 +108,10 @@ class _SubCategoryItemState extends State<SubCategoryItem> {
     }
   }
 
-  String url = 'http://alemshop.com.tm:8000/favorite-list/';
+  String url = 'http://www.alemshop.com.tm:8000/favorite-list/';
   void postData() {
     var formData = FormData.fromMap({
-      // await http
-      //     .post(
-      //   uri,
-      //   headers: <String, String>{
-      //     'Content-Type': 'application/json;charset=UTF-8',
-      //     'connection': 'keep-alive'
-      //   },
-      //   body: jsonEncode(
-      //     <String, dynamic>{
       'name': widget.name,
-      // 'user': '+99363016291',
-      // 'date': DateTime.now().toString(),
       'ai': widget.alemid,
       'brand': widget.brand,
       'gender': widget.gender,

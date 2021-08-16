@@ -98,37 +98,43 @@ class Categories with ChangeNotifier {
     return _subcategories.where((element) => element.alemid == prodId).toList();
   }
 
-  Future<void> getCategories() async {
-    const url = 'http://alemshop.com.tm:8000/category-list/';
-    // const url = 'https://www.alemshop.com.tm?action=getTable&table=category';
+  Future<List<CategoryObject>> getCategories() async {
+    final url = 'http://www.alemshop.com.tm:8000/category-list/';
 
     try {
       final response = await http.get(Uri.parse(url));
-      final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
+      print(response.statusCode);
+      final parsed = jsonDecode(utf8.decode(response.bodyBytes))
+          .cast<Map<String, dynamic>>();
       _categories = parsed
           .map<CategoryObject>((json) => CategoryObject.fromJson(json))
           .toList();
+      print(response.statusCode);
       return _categories;
-      notifyListeners();
     } catch (error) {
       throw (error);
     }
   }
 
   Future<void> getSubCategories() async {
-    var url = 'http://alemshop.com.tm:8000/subcategory-list/';
-    // var url = 'https://www.alemshop.com.tm?action=getTable&table=$catType';
+    var url = 'http://www.alemshop.com.tm:8000/subcategory-list/';
+
     _sortedSubcategories = [];
     try {
       final response = await http.get(Uri.parse(url));
-      final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
+      final parsed = jsonDecode(utf8.decode(response.bodyBytes))
+          .cast<Map<String, dynamic>>();
       _subcategories = parsed
           .map<Subcategory>((json) => SubCategoryObject.fromJson(json))
           .toList();
       return _subcategories;
-      notifyListeners();
     } catch (error) {
       throw (error);
     }
+  }
+
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
   }
 }

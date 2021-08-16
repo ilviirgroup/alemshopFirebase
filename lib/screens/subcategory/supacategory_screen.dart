@@ -28,7 +28,7 @@ class _SubCategoryState extends State<SubCategory> {
 
   Future<List<SubCategories>> fetchData() async {
     http.Response res = await http
-        .get(Uri.parse("http://alemshop.com.tm:8000/subcategory-list/"));
+        .get(Uri.parse("http://www.alemshop.com.tm:8000/subcategory-list/"));
     if (res.statusCode == 200) {
       return parseData(res);
     } else
@@ -52,7 +52,7 @@ class _SubCategoryState extends State<SubCategory> {
   @override
   Widget build(BuildContext context) {
     // final subCategoryProvider = Provider.of<Categories>(context);
-    categoryUrl = 'http://alemshop.com.tm:8000/category-list/${widget.catId}';
+    categoryUrl = 'http://www.alemshop.com.tm:8000/category-list/${widget.catId}';
 
     return FutureBuilder(
       future: fetchData(),

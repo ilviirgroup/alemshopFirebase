@@ -19,7 +19,7 @@ class _ContactsState extends State<Contacts> {
   String message = '';
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Dio dio = new Dio(BaseOptions(contentType: "application/json"));
-  String url = 'http://alemshop.com.tm:8000/message-list/"';
+  String url = 'http://www.alemshop.com.tm:8000/message-list/"';
   final _showalert = ShowAlert();
 
   @override

@@ -120,7 +120,7 @@ class _OrderButtonState extends State<OrderButton> {
     );
   }
 
-  String url = "http://alemshop.com.tm:8000/order-list/";
+  String url = "http://www.alemshop.com.tm:8000/order-list/";
   Dio dio = new Dio(BaseOptions(
     contentType: "application/json",
   ));

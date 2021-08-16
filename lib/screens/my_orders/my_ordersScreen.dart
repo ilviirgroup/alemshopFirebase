@@ -21,7 +21,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   Future<List<Orders>> fetchData() async {
     http.Response res =
-        await http.get(Uri.parse("http://alemshop.com.tm:8000/order-list/"));
+        await http.get(Uri.parse("http://www.alemshop.com.tm:8000/order-list/"));
     if (res.statusCode == 200) {
       return parseData(res);
     } else
@@ -30,7 +30,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   Future<void> getColors() async {
     http.Response res =
-        await http.get(Uri.parse('http://alemshop.com.tm:8000/color-list/'));
+        await http.get(Uri.parse('http://www.alemshop.com.tm:8000/color-list/'));
     var body = jsonDecode(utf8.decode(res.bodyBytes));
     setState(() {
       colorlar = body;
@@ -39,7 +39,7 @@ class _MyOrdersState extends State<MyOrders> {
 
   Future<void> getSize() async {
     http.Response res =
-        await http.get(Uri.parse('http://alemshop.com.tm:8000/size-list/'));
+        await http.get(Uri.parse('http://www.www.alemshop.com.tm:8000/size-list/'));
     var body = jsonDecode(utf8.decode(res.bodyBytes));
     setState(() {
       sizelar = body;

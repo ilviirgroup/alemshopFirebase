@@ -7,7 +7,7 @@ import 'package:alemshop/service.dart';
 
 
 class FetchColor with ChangeNotifier {
-  Uri url = Uri.parse("http://alemshop.com.tm:8000/color-list/");
+  Uri url = Uri.parse("http://www.alemshop.com.tm:8000/color-list/");
   Future<List<Colorlar>> fetchColors() async {
     http.Response response = await http.get(url);
     if (response.statusCode == 200) {

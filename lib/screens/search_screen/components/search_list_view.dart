@@ -21,7 +21,7 @@ class SearchListView extends StatelessWidget {
 
   Future<List<Products>> fetchData() async {
     http.Response res =
-        await http.get(Uri.parse("http://alemshop.com.tm:8000/product-list/"));
+        await http.get(Uri.parse("http://www.alemshop.com.tm:8000/product-list/"));
     if (res.statusCode == 200) {
       return parseData(res);
     } else

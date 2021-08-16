@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:alemshop/screens/category_screen/components/category_item.dart';
 import 'package:alemshop/models/category_provider.dart';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:provider/provider.dart';
 
 class CategoryGridView extends StatelessWidget {
@@ -15,7 +13,7 @@ class CategoryGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryProvider = Provider.of<Categories>(context);
-    
+
     return FutureBuilder(
       future: categoryProvider.getCategories(),
       builder: (context, snapshot) {
