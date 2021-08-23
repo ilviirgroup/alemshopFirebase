@@ -161,7 +161,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(loggedPhone);
     final cart = Provider.of<Cart>(context, listen: false);
     return SafeArea(
       child: Scaffold(
@@ -175,35 +174,42 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     setState(() {
                       quantityList.add(counter.toString());
                     });
-                    cart.addItem(
-                      // orderId,
-                      '${widget.alemid}',
-                      widget.price.toDouble(),
-                      counter,
-                      _counter,
-                      '${widget.name}',
-                      '${widget.url}',
-                      '$userPhone',
-                      '$userEmail',
-                      '$userName',
-                      selColor,
-                      selSize,
-                      quantityList,
-                    );
-                    _counter++;
-                    for (var i = 0; i < cart.items.length; i++) {
-                      print(cart.items.values.toList()[i].colorList);
-
-                      print(
-                        cart.items.values.toList()[0].sizeList,
+                    if (selColor.isEmpty && selSize.isEmpty) {
+                      setState(() {
+                        _showalert.showAlertDialog(
+                            context, "", "Пожалуйста выберите цвет и размер");
+                      });
+                    } else {
+                      cart.addItem(
+                        // orderId,
+                        '${widget.alemid}',
+                        widget.price.toDouble(),
+                        counter,
+                        _counter,
+                        '${widget.name}',
+                        '${widget.url}',
+                        '$userPhone',
+                        '$userEmail',
+                        '$userName',
+                        selColor,
+                        selSize,
+                        quantityList,
                       );
-                      print(cart.items.keys.toList()[i]);
-                    }
+                      _counter++;
 
-                    setState(() {
-                      _showalert.showAlertDialog(
-                          context, "В корзину", "Добавлен в корзину");
-                    });
+                      for (var i = 0; i < cart.items.length; i++) {
+                        print(cart.items.values.toList()[i].colorList);
+
+                        print(
+                          cart.items.values.toList()[0].sizeList,
+                        );
+                        print(cart.items.keys.toList()[i]);
+                      }
+                      setState(() {
+                        _showalert.showAlertDialog(
+                            context, "В корзину", "Добавлен в корзину");
+                      });
+                    }
                   } else {
                     setState(() {
                       _showalert.showAlertDialog(
@@ -213,8 +219,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 },
                 child: Text("в корзину"),
               )
-              // }
-              // )
             ],
           ),
           body: FutureBuilder(

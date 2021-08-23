@@ -121,45 +121,45 @@ class _OrderButtonState extends State<OrderButton> {
   }
 
   String url = "http://www.alemshop.com.tm:8000/order-list/";
-  Dio dio = new Dio(BaseOptions(
-    contentType: "application/json",
-  ));
-  Future<void> sendOrders(
-      String ai,
-      String name,
-      double price,
-      List color,
-      List size,
-      int quantity,
-      String phone,
-      String email,
-      String userName,
-      String photo) async {
-    try {
-      await http
-          .post(Uri.parse(url),
-              headers: <String, String>{'Content-Type': 'application/json'},
-              body: jsonEncode(<String, dynamic>{
-                "ai": ai,
-                "name": name,
-                "price": price,
-                "color": color,
-                "size": size,
-                "quantity": quantity,
-                "username": userName,
-                "userphone": phone,
-                "useremail": 'alem@mail.com',
-                "completed": false,
-                "inprocess": false,
-                "photo": photo,
-              }))
-          .then((http.Response res) {
-        print(res.statusCode);
-      });
-    } catch (e) {
-      print(e.message);
-    }
-  }
+  // Dio dio = new Dio(BaseOptions(
+  //   contentType: "application/json",
+  // ));
+  // Future<void> sendOrders(
+  //     String ai,
+  //     String name,
+  //     double price,
+  //     List color,
+  //     List size,
+  //     int quantity,
+  //     String phone,
+  //     String email,
+  //     String userName,
+  //     String photo) async {
+  //   try {
+  //     await http
+  //         .post(Uri.parse(url),
+  //             headers: <String, String>{'Content-Type': 'application/json'},
+  //             body: jsonEncode(<String, dynamic>{
+  //               "ai": ai,
+  //               "name": name,
+  //               "price": price,
+  //               "color": color,
+  //               "size": size,
+  //               "quantity": quantity,
+  //               "username": userName,
+  //               "userphone": phone,
+  //               "useremail": email,
+  //               "completed": false,
+  //               "inprocess": false,
+  //               "photo": photo,
+  //             }))
+  //         .then((http.Response res) {
+  //       print(res.statusCode);
+  //     });
+  //   } catch (e) {
+  //     print(e.message);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -181,53 +181,49 @@ class _OrderButtonState extends State<OrderButton> {
                 onPressed: () {
                   // if (FirebaseAuth.instance.currentUser != null) {
                   cart.items.forEach((key, value) {
-                    print(value.id);
-                    print(value.title);
-                    print(value.price);
-                    print(value.colorList.toList());
-                    print(value.sizeList.toList());
-                    print(value.quantity);
-                    print(value.userName);
-                    print(value.userPhone);
-                    print(value.userEmail);
-                    print(value.imgUrl);
-                    http
-                        .post(Uri.parse(url),
+                    // print(value.id);
+                    // print(value.title);
+                    // print(value.price);
+                    // print(value.colorList.toList());
+                    // print(value.sizeList.toList());
+                    // print(value.quantity);
+                    // print(value.userName);
+                    // print(value.userPhone);
+                    // print(value.userEmail ?? '');
+                    // print(value.imgUrl);
+                    try {
+                      http
+                          .post(
+                            Uri.parse(url),
                             headers: <String, String>{
                               'Content-Type': 'application/json'
                             },
-                            body: jsonEncode(<String, dynamic>{
-                              "ai": value.id,
-                              "name": value.title,
-                              "price": value.price,
-                              "color": value.colorList.toList(),
-                              "size": value.sizeList.toList(),
-                              "quantity": value.quantity,
-                              "username": value.userName,
-                              "userphone": value.userPhone,
-                              "useremail": value.userEmail,
-                              "completed": false,
-                              "inprocess": false,
-                              "photo": value.imgUrl
-                            }))
-                        .then((http.Response res) {
-                      print(res.statusCode);
-                    });
-                    // sendOrders(
-                    //     value.id,
-                    //     value.title,
-                    //     value.price,
-                    //     value.colorList.toList(),
-                    //     value.sizeList.toList(),
-                    //     value.quantity,
-                    //     value.userName,
-                    //     value.userPhone,
-                    //     value.userEmail,
-                    //     value.imgUrl);
+                            body: jsonEncode(
+                              <String, dynamic>{
+                                "ai": value.id,
+                                "name": value.title,
+                                "price": value.price,
+                                "color": value.colorList.toList(),
+                                "size": value.sizeList.toList(),
+                                "quantity": value.quantity,
+                                "username": value.userName,
+                                "userphone": value.userPhone,
+                                // "useremail": value.userEmail ?? '',
+                                "completed": false,
+                                "inprocess": false,
+                                "photo": value.imgUrl
+                              },
+                            ),
+                          )
+                          .then(
+                            (http.Response res) => print(res.statusCode),
+                          );
+                    } catch (e) {
+                      print(e.toString());
+                    }
+                 
                   });
-                  // } else {
-                  //   print('logged');
-                  // }
+             
 
                   widget.cart.clear();
                   Navigator.of(context).pop();

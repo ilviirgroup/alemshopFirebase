@@ -20,7 +20,8 @@ class SubCategory extends StatefulWidget {
 
 class _SubCategoryState extends State<SubCategory> {
   List<SubCategories> parseData(var response) {
-    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes))
+        .cast<Map<String, dynamic>>();
     return parsed
         .map<SubCategories>((json) => SubCategories.fromMap(json))
         .toList();
@@ -52,7 +53,8 @@ class _SubCategoryState extends State<SubCategory> {
   @override
   Widget build(BuildContext context) {
     // final subCategoryProvider = Provider.of<Categories>(context);
-    categoryUrl = 'http://www.alemshop.com.tm:8000/category-list/${widget.catId}';
+    categoryUrl =
+        'http://www.alemshop.com.tm:8000/category-list/${widget.catId}';
 
     return FutureBuilder(
       future: fetchData(),
@@ -111,7 +113,9 @@ class _SubCategoryState extends State<SubCategory> {
               horizontal: MediaQuery.of(context).size.width / 25),
           child: Text(
             name,
-            style: TextStyle(color: Colors.blue, fontSize: 16.0),
+            style: (subId == id)
+                ? TextStyle(color: Colors.orangeAccent, fontSize: 16.0)
+                : TextStyle(color: Colors.blue, fontSize: 16.0),
           )),
       onTap: () {
         changeSub(id);

@@ -44,8 +44,8 @@ class _AppDrawerState extends State<AppDrawer> {
 
   void getUpdate() async {
     try {
-      http.Response res =
-          await http.get(Uri.parse('http://www.alemshop.com.tm:8000/update-list/'));
+      http.Response res = await http
+          .get(Uri.parse('http://www.alemshop.com.tm:8000/update-list/'));
       var data = jsonDecode(utf8.decode(res.bodyBytes));
       setState(() {
         update = data[0]['update'];
@@ -227,7 +227,10 @@ class _AppDrawerState extends State<AppDrawer> {
                 final subcategory = category.id;
 
                 final categoryitem = ListTile(
-                  leading: Icon(Icons.account_tree),
+                  leading: CircleAvatar(
+                    radius: 15,
+                    backgroundImage: NetworkImage(url),
+                  ),
                   title: Text(name ?? "",
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   onTap: () {

@@ -31,20 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   String phone = '';
   String url = 'http://www.alemshop.com.tm:8000/user-list/';
 
-  // List<Users> parseData(String response) {
-  //   final parsed = jsonDecode(response).cast<Map<String, dynamic>>();
-  //   return parsed.map<Users>((json) => Users.fromMap(json)).toList();
-  // }
-
-  // Future<List<Users>> fetchData() async {
-  //   http.Response res =
-  //       await http.get(Uri.parse("http://alemshop.com.tm:8000/user-list/"));
-  //   if (res.statusCode <= 200 && res.statusCode < 299) {
-  //     return parseData(res.body);
-  //   } else
-  //     throw Exception("Unable to fetch data from server");
-  // }
-
+ 
   Future<void> getUsers() async {
     http.Response res = await http.get(Uri.parse(url));
     print(res.statusCode);

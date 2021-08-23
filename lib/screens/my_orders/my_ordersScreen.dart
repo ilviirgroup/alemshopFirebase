@@ -15,13 +15,14 @@ class MyOrders extends StatefulWidget {
 
 class _MyOrdersState extends State<MyOrders> {
   List<Orders> parseData(var response) {
-    final parsed = jsonDecode(utf8.decode(response.bodyBytes)).cast<Map<String, dynamic>>();
+    final parsed = jsonDecode(utf8.decode(response.bodyBytes))
+        .cast<Map<String, dynamic>>();
     return parsed.map<Orders>((json) => Orders.fromMap(json)).toList();
   }
 
   Future<List<Orders>> fetchData() async {
-    http.Response res =
-        await http.get(Uri.parse("http://www.alemshop.com.tm:8000/order-list/"));
+    http.Response res = await http
+        .get(Uri.parse("http://www.alemshop.com.tm:8000/order-list/"));
     if (res.statusCode == 200) {
       return parseData(res);
     } else
@@ -29,21 +30,17 @@ class _MyOrdersState extends State<MyOrders> {
   }
 
   Future<void> getColors() async {
-    http.Response res =
-        await http.get(Uri.parse('http://www.alemshop.com.tm:8000/color-list/'));
+    http.Response res = await http
+        .get(Uri.parse('http://www.alemshop.com.tm:8000/color-list/'));
     var body = jsonDecode(utf8.decode(res.bodyBytes));
-    setState(() {
-      colorlar = body;
-    });
+    colorlar = body;
   }
 
   Future<void> getSize() async {
     http.Response res =
-        await http.get(Uri.parse('http://www.www.alemshop.com.tm:8000/size-list/'));
+        await http.get(Uri.parse('http://www.alemshop.com.tm:8000/size-list/'));
     var body = jsonDecode(utf8.decode(res.bodyBytes));
-    setState(() {
-      sizelar = body;
-    });
+    sizelar = body;
   }
 
   List colorlar = [];
@@ -62,6 +59,11 @@ class _MyOrdersState extends State<MyOrders> {
     }
     getSize();
     getColors();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -87,7 +89,7 @@ class _MyOrdersState extends State<MyOrders> {
                       var orders = snapshot.data[index];
                       final userPhone = orders.userPhone;
                       final userName = orders.userName;
-                      final userEmail = orders.userEmail;
+                      // final userEmail = orders.userEmail;
                       final alemId = orders.alemId;
                       final name = orders.name;
                       final quantity = orders.quantity;
@@ -101,16 +103,17 @@ class _MyOrdersState extends State<MyOrders> {
                       final photo = orders.photo;
                       var colorName = '';
                       var sizeName = '';
-                      for (var i = 0; i < colorlar.length; i++) {
-                        var url = colorlar[i]['url'];
-                        if (url == colors[0]) {
-                          colorName = colorlar[i]['name'];
-                        }
-                      }
+
                       for (var i = 0; i < sizelar.length; i++) {
                         var url = sizelar[i]['url'];
                         if (url == sizes[0]) {
                           sizeName = sizelar[i]['name'];
+                        }
+                      }
+                      for (var i = 0; i < colorlar.length; i++) {
+                        var url = colorlar[i]['url'];
+                        if (url == colors[0]) {
+                          colorName = colorlar[i]['name'];
                         }
                       }
 
@@ -188,6 +191,7 @@ class _OrderCardState extends State<OrderCard> {
 
   @override
   Widget build(BuildContext context) {
+   
     return (widget.user == widget.phone)
         ? Container(
             // color: (isInProcess && isCompleted) ? Colors.greenAccent : Colors.white,

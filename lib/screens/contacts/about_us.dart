@@ -20,7 +20,7 @@ class AboutUs extends StatelessWidget {
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
               ),
               Text(
-                '+993 63 74-95-55',
+                '+993 65 53-10-16',
                 style: TextStyle(
                     color: Colors.orange,
                     fontSize: 20.0,
